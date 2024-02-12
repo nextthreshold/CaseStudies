@@ -1,0 +1,80 @@
+---
+title: "Factorial Design Case Study"
+author: "Harshvardhan Bhosale"
+date: "2024-02-04"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Factorial Design 
+
+We are going to perfrom a case study on facorial design based on the HairEyeColor dataset available in R.This data set has 3 variables Gender, Hair coluur and the colour of individuals eye along with the number of individuals of the specific conditions that we'll consider as our yeild.
+
+```{r cars}
+datasets::Titanic
+```
+
+## Data Preparation.
+
+The above data needs to be modified to perform a factorial design experiment.
+
+```{r}
+y1<-c(0,0,35,0,0,0,17,0)
+type1<-rep('Child',8)
+stat1<-rep('dead',8)
+gend1<-c(rep('M',4),rep('F',4))
+y2<-c(118,154,387,670,4,13,89,3)
+type2<-rep('Adult',8)
+stat2=stat1
+y3<-c(5,11,13,0,1,13,14,0)
+type3<-type1
+stat3<-rep('survived',8)
+y4<-c(57,14,75,192,140,80,76,20)
+type4=type2
+stat4=stat3
+
+Age<-c(type1,type2,type3,type4)
+Gender<-c(rep(gend1,4))
+No.Indivividuals<-c(y1,y2,y3,y4)
+Status<-c(stat1,stat2,stat3,stat4)
+
+data<-data.frame(Age,Gender,Status,No.Indivividuals)
+data
+```
+
+## Importing the necessary packages:
+```{r}
+library(performance)
+library(car)
+library(carData)
+library(doebioresearch)
+```
+
+## Fitting the Model:
+```{r}
+attach(data)
+
+model<-lm(No.Indivividuals~Age*Gender*Status) 
+summary(model)
+anova(model)
+```
+
+## Various test that are required:
+# Shapiro Test for Normality
+```{r}
+shapiro.test(data$No.Indivividuals)  
+```
+
+# Levene's Test 
+```{r}
+leveneTest(No.Indivividuals~Age)
+leveneTest(No.Indivividuals~Gender)
+leveneTest(No.Indivividuals~Status)
+```
+
+
+
+

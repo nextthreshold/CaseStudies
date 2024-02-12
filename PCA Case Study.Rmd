@@ -1,0 +1,73 @@
+---
+title: "Case study"
+author: "Harshvardhan Bhosale Roll No. 945"
+date: "2024-01-11"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+
+
+```{r cars}
+data=mtcars
+head(data)
+```
+
+## Performing Principal Component Analysis
+
+Now we are going to foollow various steps involved in performing a principal component analysis
+
+## Covariance Matrix
+
+```{r pressure, echo=FALSE}
+cov.mat<-cov(data)
+cov.mat
+```
+
+## Correlation Matrix
+```{r}
+cor.mat<-cor(data)   
+cor.mat
+```
+## Getting Eigen-values basedon the correlation matrix
+```{r}
+eign<-eigen(cor.mat)
+eig.val<-eign$values
+eign
+```
+## Performing Principal Component Analysis 
+This step provides us with the analysis and the summary of the analysis performed whcih gives us the standard deviation of each component and the proportional variances of each component 
+```{r}
+pca_result <- princomp(mtcars, cor = TRUE)
+# Explore the PCA results
+summary(pca_result)
+```
+
+## Obtaining the scores
+```{r}
+pca_result$scores
+```
+
+## Plotting the proportional Varaince of Components 
+Here we will make a scree plot of the proportional variances of the components of the PCA which will help us in determining the significant components 
+```{r}
+# Scree plot to visualize the proportion of variance explained by each principal component
+plot(pca_result, type = "l", main = "Scree Plot")
+```
+Here we can see an elbow near compnent 3 thus we can say that the components 1 , 2, and 3 are significant 
+
+## Making a Biplot
+Biplot helps us in identifying the clusters that are made by the individual obserations and helps us in identifying their influence in components 
+```{r}
+biplot(pca_result)
+```
+
+Thus here we can see that several types of different cars e.g. sports cars like Maserati Bora and Ferrari Dino form a group together and a similar pattern is followed by the rest of the cars 

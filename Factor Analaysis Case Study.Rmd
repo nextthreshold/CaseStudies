@@ -1,0 +1,128 @@
+---
+title: "Factor Anlaysis Case Study"
+author: "Harshvardhan Bhosale"
+date: "2024-02-06"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Preparing the data for factor analysis.
+
+```{r cars}
+data=mtcars
+```
+
+## Loading Packages
+```{r}
+library(psych)
+```
+
+## Principal Component Analysis 
+We'll start by perfroming a principal component analysis on the data.
+
+```{r}
+cor.mat<-cor(data) # obtaining the correlation of the data 
+bartlett.test(data) #null hypothesis rejected data eligible for factor anlaysis
+pca1<-princomp(data,cor = T)
+summary(pca1)
+plot(pca1,type='l')
+pca1$loadings
+pca1$scores
+```
+
+As we can see from the scree plot that the first 3 components explain the most of the variation in the data.
+
+## Eligibility of the data for a Factor Analysis
+1) The data is adequately large and metric
+2) The data contains multicollinearity as can be seen from the correlaton matrix
+3) Bartlett's Test of Sphericity 
+```{r}
+bartlett.test(data) 
+```
+As we can see the null hypothesis has been rejected.
+# Since the above 3 conditions are satisfied we can proceed for a factor analysis.
+
+
+## Factor Analysis 
+Now we'll perform a factor analysis on the data.
+We'll generate 3 factors because like we saw in the PCA three components are enough to explain 90% of the variation.
+```{r}
+fact1<-principal(data,nfactors = 3,rotate = 'none') # no. of factors=3 from the scree elbow
+summary(fact1)
+fact1$loadings
+fact1$uniquenesses #specific variance of the analysis 
+fact1$communality #comunalties of the analysis 
+a_1<-diag(fact1$uniquenesses)
+l_1<-fact1$loadings 
+b_1<-l_1 %*% t(l_1)
+residual1<-cor.mat-b_1-a_1
+```
+Here we have used no rotation on the analysis thus we can see that the factor are difficult to interpret and not much sensible.
+
+## MLE method 
+Here we will use the Maxium Likelihood Method to perform a factor analysis.
+
+```{r}
+fact2<-factanal(data,factors = 3,rotation='none')
+summary(fact2)
+fact2$loadings
+fact2$uniquenesses
+communality<-1-fact2$uniquenesses
+l_2<-fact2$loadings
+a_2<-diag(fact2$uniquenesses)
+b_2<-l_2%*%t(l_2)
+residual2<-cor.mat-b_2-a_2
+```
+Similar to the previous method we have not used anly rotaions on the analysis.
+Note the changes in the formula for communality.
+
+## Applying various Rotation methods:
+Here, we'll try various rotation methods available to us e.g. varimax, equamax, promax and quartimax.
+
+# Varimax Rotation
+```{r}
+rot1<-principal(data,nfactors = 3,rotate = 'varimax') # varimax rotation
+rot1$loadings
+rot1$uniquenesses #specific variance of the analysis 
+rot1$communality #comunalties of the analysis 
+a_3<-diag(rot1$uniquenesses)
+l_3<-rot1$loadings 
+b_3<-l_3 %*% t(l_3)
+residual3<-cor.mat-b_3-a_3
+```
+
+# Equamax Rotation
+```{r}
+rot2 <- principal(data, nfactors = 3, rotate = 'equamax') # equamax Rotation
+rot2$loadings
+rot2$uniquenesses #specific variance of the analysis 
+rot2$communality #communalties of the analysis 
+a_4<-diag(rot2$uniquenesses)
+l_4<-rot2$loadings 
+b_4<-l_4 %*% t(l_4)
+residual4<-cor.mat-b_4-a_4
+```
+
+# Promax Rotation
+```{r}
+rot3 <- principal(data, nfactors = 3, rotate = 'promax') # equamax Rotation
+
+rot3$loadings
+```
+
+#Quartimax Rotation
+```{r}
+rot4 <- principal(data, nfactors = 3, rotate = 'quartimax') # equamax Rotation
+
+rot4$loadings
+```
+
+## Inference 
+As we can see from the above rotations, we have taken 3 factors from the data mtcars.
+In this case the Varimax rotation method has given us the best result in creating distinct datasets. In this case, since the dataset is for cars we can draw the following inferences
+The factors have been formed by the form by which we generally segregate the cars in market e.g. economy cars(cars with good fuel efficiency), normal car and performance car(sports car).
+Here, we can see that factor RC3 contains the type of variables that define performance vehicles since it has higher weightage to cyl, disp, hp and negative weightage to qsec, mpg, wt, etc. Similarly, RC2 defines economy vehicles since the weightage are opposite to the performance cars. 
+And RC1 stands for normal cars.
+
